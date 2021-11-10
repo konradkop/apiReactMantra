@@ -1,24 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import React, { useEffect, useState } from "react";
+import { ChakraProvider } from "@chakra-ui/react";
+import { fetchStarWarsFacts } from "./APICalls";
+import NameCard from "./components/StarCards/NameCard";
+import HeightCard from "./components/StarCards/HeightCard";
+import MassCard from "./components/StarCards/MassCard";
+import { Flex, Grid, GridItem } from "@chakra-ui/react";
 
 function App() {
+  const [starWarsFacts, setStarWarsFacts] = useState([]);
+
+  useEffect(() => {
+    fetchStarWarsFacts().then((res) => {
+      let newStarWarsFacts = [...starWarsFacts, ...res];
+      setStarWarsFacts(newStarWarsFacts);
+    });
+  }, []);
+
+  console.log(starWarsFacts);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <ChakraProvider>
+      <div className="App">
+        <Grid
+          h="200px"
+          templateRows="repeat(2, 1fr)"
+          templateColumns="repeat(4, 1fr)"
+          gap={1}
+          margin="50px"
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          {starWarsFacts.map((ele) => {
+            return (
+              <GridItem borderWidth="thick" backgroundColor="lightgrey">
+                <Flex flexDir="column" alignItems="center">
+                  <NameCard name={ele.name} />
+                  <MassCard mass={ele.mass} />
+                  <HeightCard height={ele.height} />
+                </Flex>
+              </GridItem>
+            );
+          })}
+        </Grid>
+      </div>
+      ;
+    </ChakraProvider>
   );
 }
 
